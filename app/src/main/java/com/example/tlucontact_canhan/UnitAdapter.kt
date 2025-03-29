@@ -1,5 +1,6 @@
 package com.example.tlucontact_canhan
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,8 @@ class UnitAdapter(private val units: List<ContactUnit>, private val onClick: (Co
     }
 
     override fun onBindViewHolder(holder: UnitViewHolder, position: Int) {
+        // Log the position and unit name for debugging
+        Log.d("UnitAdapter", "onBindViewHolder: position = $position, unit = ${units[position]}")
         val unit = units[position]
         holder.bind(unit)
         holder.itemView.setOnClickListener { onClick(unit) }

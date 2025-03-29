@@ -2,6 +2,7 @@ package com.example.tlucontact_canhan
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.example.tlucontact_canhan.databinding.ActivityMainBinding
@@ -14,7 +15,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Sử dụng Toolbar
         setSupportActionBar(binding.toolbar)
+
+        // Hiển thị UnitFragment mặc định khi khởi động
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.fragmentContainer, UnitFragment())
+                .commit()
+            Toast.makeText(this, "Hiển thị thành công dữ liệu", Toast.LENGTH_SHORT).show()
+            binding.bottomNavigation.selectedItemId = R.id.nav_units
+        }
+
         startActivity(intent)
         val options = ActivityOptionsCompat.makeCustomAnimation(this, android.R.anim.fade_in, android.R.anim.fade_out)
         startActivity(intent, options.toBundle())
@@ -23,15 +36,17 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_units -> {
-                    val intent = Intent(this, UnitListActivity::class.java)
-                    startActivity(intent)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, UnitFragment())
+                        .commit()
                     true
                 }
-//                R.id.nav_staff -> {
-//                    val intent = Intent(this, StaffListActivity::class.java)
-//                    startActivity(intent)
-//                    true
-//                }
+                R.id.nav_staff -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, StaffFragment())
+                        .commit()
+                    true
+                }
                 else -> false
             }
         }
