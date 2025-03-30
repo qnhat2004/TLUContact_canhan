@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.example.tlucontact_canhan.databinding.ActivityMainBinding
+import com.example.tlucontact_canhan.fragment.StaffFragment
+import com.example.tlucontact_canhan.fragment.UnitFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +26,6 @@ class MainActivity : AppCompatActivity() {
                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.fragmentContainer, UnitFragment())
                 .commit()
-            Toast.makeText(this, "Hiển thị thành công dữ liệu", Toast.LENGTH_SHORT).show()
             binding.bottomNavigation.selectedItemId = R.id.nav_units
         }
 

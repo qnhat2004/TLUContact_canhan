@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan
+package com.example.tlucontact_canhan.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
