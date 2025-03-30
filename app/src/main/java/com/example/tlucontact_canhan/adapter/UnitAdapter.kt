@@ -3,7 +3,7 @@ package com.example.tlucontact_canhan.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tlucontact_canhan.databinding.UnitHeaderItemBinding
+import com.example.tlucontact_canhan.databinding.HeaderItemBinding
 import com.example.tlucontact_canhan.databinding.UnitItemBinding
 import com.example.tlucontact_canhan.model.UnitListItem
 
@@ -27,7 +27,7 @@ class UnitAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_HEADER -> {
-                val binding = UnitHeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding = HeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 HeaderViewHolder(binding)
             }
             else -> {
@@ -54,7 +54,7 @@ class UnitAdapter(
         notifyDataSetChanged()
     }
 
-    class HeaderViewHolder(private val binding: UnitHeaderItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class HeaderViewHolder(private val binding: HeaderItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(header: UnitListItem.Header) {
             binding.tvHeader.text = header.letter
         }
