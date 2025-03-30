@@ -167,7 +167,6 @@ Chúng tôi hoan nghênh mọi đóng góp để cải thiện ứng dụng! Đ�
 ## Giấy phép
 
 Dự án này được cấp phép theo [LICENSE](./LICENSE). Xem file LICENSE để biết thêm chi tiết.
-s
 ---
 
 ## Liên hệ
