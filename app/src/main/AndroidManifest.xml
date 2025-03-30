@@ -21,6 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Thêm khai báo cho UnitDetailActivity -->
+        <activity
+            android:name=".UnitDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StaffDetailtActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
