@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan.fragment
+package com.example.tlucontact.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tlucontact_canhan.UnitDetailActivity
-import com.example.tlucontact_canhan.adapter.UnitAdapter
-import com.example.tlucontact_canhan.data.SampleData
-import com.example.tlucontact_canhan.databinding.FragmentUnitBinding
-import com.example.tlucontact_canhan.model.ContactUnit
-import com.example.tlucontact_canhan.model.UnitListItem
+import com.example.tlucontact.activity.UnitDetailActivity
+import com.example.tlucontact.adapter.UnitAdapter
+import com.example.tlucontact.data.SampleData
+import com.example.tlucontact.databinding.FragmentUnitBinding
+import com.example.tlucontact.model.ContactUnit
+import com.example.tlucontact.model.UnitListItem
 
 class UnitFragment : Fragment() {
     private var _binding: FragmentUnitBinding? = null
@@ -67,8 +67,8 @@ class UnitFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             isAscending = !isAscending
             binding.btnSort.setImageResource(
-                if (isAscending) com.example.tlucontact_canhan.R.drawable.ic_sort_ascending
-                else com.example.tlucontact_canhan.R.drawable.ic_sort_descending
+                if (isAscending) com.example.tlucontact.R.drawable.ic_sort_ascending
+                else com.example.tlucontact.R.drawable.ic_sort_descending
             )
             sortUnits()
             Toast.makeText(requireContext(), "Đã sắp xếp ${if (isAscending) "A-Z" else "Z-A"}", Toast.LENGTH_SHORT).show()        }

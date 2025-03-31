@@ -1,15 +1,12 @@
-package com.example.tlucontact_canhan.adapter
+package com.example.tlucontact.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tlucontact_canhan.adapter.UnitAdapter.HeaderViewHolder
-import com.example.tlucontact_canhan.adapter.UnitAdapter.UnitViewHolder
-import com.example.tlucontact_canhan.databinding.HeaderItemBinding
-import com.example.tlucontact_canhan.databinding.StaffItemBinding
-import com.example.tlucontact_canhan.databinding.UnitItemBinding
-import com.example.tlucontact_canhan.model.Staff
-import com.example.tlucontact_canhan.model.StaffListItem
+import com.example.tlucontact.databinding.HeaderItemBinding
+import com.example.tlucontact.databinding.StaffItemBinding
+import com.example.tlucontact.model.Staff
+import com.example.tlucontact.model.StaffListItem
 
 class StaffAdapter(
     private var items: List<StaffListItem>,

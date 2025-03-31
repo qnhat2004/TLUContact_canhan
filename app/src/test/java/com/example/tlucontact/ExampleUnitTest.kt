@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan
+package com.example.tlucontact
 
 import org.junit.Test
 

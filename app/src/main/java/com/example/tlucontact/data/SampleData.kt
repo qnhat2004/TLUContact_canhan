@@ -1,7 +1,7 @@
-package com.example.tlucontact_canhan.data
+package com.example.tlucontact.data
 
-import com.example.tlucontact_canhan.model.ContactUnit
-import com.example.tlucontact_canhan.model.Staff
+import com.example.tlucontact.model.ContactUnit
+import com.example.tlucontact.model.Staff
 
 object SampleData {
     val units = listOf(

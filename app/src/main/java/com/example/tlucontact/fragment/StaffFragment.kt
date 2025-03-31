@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan.fragment
+package com.example.tlucontact.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,13 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tlucontact_canhan.data.SampleData
-import com.example.tlucontact_canhan.StaffDetailtActivity
-import com.example.tlucontact_canhan.adapter.StaffAdapter
-import com.example.tlucontact_canhan.databinding.FragmentStaffBinding
-import com.example.tlucontact_canhan.model.Staff
-import com.example.tlucontact_canhan.model.StaffListItem
-import com.example.tlucontact_canhan.model.UnitListItem
+import com.example.tlucontact.data.SampleData
+import com.example.tlucontact.activity.StaffDetailtActivity
+import com.example.tlucontact.adapter.StaffAdapter
+import com.example.tlucontact.databinding.FragmentStaffBinding
+import com.example.tlucontact.model.Staff
+import com.example.tlucontact.model.StaffListItem
 
 class StaffFragment : Fragment() {
     private var _binding: FragmentStaffBinding? = null
@@ -65,8 +64,8 @@ class StaffFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             isAscending = !isAscending
             binding.btnSort.setImageResource(
-                if (isAscending) com.example.tlucontact_canhan.R.drawable.ic_sort_ascending
-                else com.example.tlucontact_canhan.R.drawable.ic_sort_descending
+                if (isAscending) com.example.tlucontact.R.drawable.ic_sort_ascending
+                else com.example.tlucontact.R.drawable.ic_sort_descending
             )
             sortStaffs()
         }

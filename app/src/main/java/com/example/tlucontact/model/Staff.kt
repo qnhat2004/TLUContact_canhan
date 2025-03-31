@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan.model
+package com.example.tlucontact.model
 
 data class Staff(
     val name: String,

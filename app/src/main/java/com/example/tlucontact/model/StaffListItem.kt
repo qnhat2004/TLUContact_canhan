@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan.model
+package com.example.tlucontact.model
 
 sealed class StaffListItem {     // Lớp cha cho các mục trong danh sách
     data class Header(val letter: String) : StaffListItem()  // Lớp con cho tiêu đề

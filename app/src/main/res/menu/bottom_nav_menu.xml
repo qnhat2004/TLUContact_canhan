@@ -8,4 +8,8 @@
         android:id="@+id/nav_staff"
         android:icon="@drawable/ic_staff"
         android:title="CBNV"/>
+    <item
+        android:id="@+id/nav_student"
+        android:icon="@drawable/student"
+        android:title="Sinh Viên"/>
 </menu>
