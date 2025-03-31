@@ -21,10 +21,10 @@ class StaffDetailtActivity : AppCompatActivity() {
         val position = intent.getStringExtra("staff_position") ?: "Không có chức vụ"
 
         binding.tvDetailtStaffName.text = name
-        binding.tvDetailtStaffPhone.text = "SĐT: $phone"
-        binding.tvDetailtStaffEmail.text = "Email: $email"
-        binding.tvDetailtStaffUnit.text = "Đơn vị: $unit"
-        binding.tvDetailtStaffPosition.text = "Chức vụ: $position"
+        binding.tvDetailtStaffPhone.text = phone
+        binding.tvDetailtStaffEmail.text = email
+        binding.tvDetailtStaffUnit.text = unit
+        binding.tvDetailtStaffPosition.text = position
 
         binding.btnUnitCall.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
