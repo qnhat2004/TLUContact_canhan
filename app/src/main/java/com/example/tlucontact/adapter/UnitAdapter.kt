@@ -3,9 +3,9 @@ package com.example.tlucontact.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tlucontact.databinding.HeaderItemBinding
-import com.example.tlucontact.databinding.UnitItemBinding
 import com.example.tlucontact.model.UnitListItem
+import com.example.tlucontact_canhan.databinding.HeaderItemBinding
+import com.example.tlucontact_canhan.databinding.UnitItemBinding
 
 class UnitAdapter(
     private var items: List<UnitListItem>,

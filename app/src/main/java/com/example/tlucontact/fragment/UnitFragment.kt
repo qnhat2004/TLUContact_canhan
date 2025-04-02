@@ -13,9 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tlucontact.activity.UnitDetailActivity
 import com.example.tlucontact.adapter.UnitAdapter
 import com.example.tlucontact.data.SampleData
-import com.example.tlucontact.databinding.FragmentUnitBinding
 import com.example.tlucontact.model.ContactUnit
 import com.example.tlucontact.model.UnitListItem
+import com.example.tlucontact_canhan.R
+import com.example.tlucontact_canhan.databinding.FragmentUnitBinding
 
 class UnitFragment : Fragment() {
     private var _binding: FragmentUnitBinding? = null
@@ -67,11 +68,12 @@ class UnitFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             isAscending = !isAscending
             binding.btnSort.setImageResource(
-                if (isAscending) com.example.tlucontact.R.drawable.ic_sort_ascending
-                else com.example.tlucontact.R.drawable.ic_sort_descending
+                if (isAscending) R.drawable.ic_sort_ascending
+                else R.drawable.ic_sort_descending
             )
             sortUnits()
-            Toast.makeText(requireContext(), "Đã sắp xếp ${if (isAscending) "A-Z" else "Z-A"}", Toast.LENGTH_SHORT).show()        }
+            Toast.makeText(requireContext(), "Đã sắp xếp ${if (isAscending) "A-Z" else "Z-A"}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun groupUnitsByLetter(units: List<ContactUnit>): List<UnitListItem> {
@@ -94,8 +96,8 @@ class UnitFragment : Fragment() {
         } else {
             SampleData.units.filter {
                 it.name.contains(query, ignoreCase = true) ||
-                it.phone.contains(query) ||
-                it.email!!.contains(query, ignoreCase = true)
+                        it.phone.contains(query) ||
+                        it.email!!.contains(query, ignoreCase = true)
             }
         }
         val newItems = groupUnitsByLetter(if (isAscending) filteredUnits.sortedBy { it.name } else filteredUnits.sortedByDescending { it.name })

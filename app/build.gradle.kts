@@ -58,4 +58,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0") // Gọi API bằng Retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.9.0") // Chuyển đổi JSON -> Object
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")   // LiveData, dùng để quản lý dữ liệu
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3") // Ghi log API
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
 }

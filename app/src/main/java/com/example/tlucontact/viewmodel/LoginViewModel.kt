@@ -22,11 +22,11 @@ class LoginViewModel : ViewModel() {
             if (response.isSuccessful) {
                 val token = response.body()?.id_token
                 if (token != null) {
-                    val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                    val sharedPref = context.getSharedPreferences("APP_PREFS", Context.MODE_PRIVATE)
                     with(sharedPref.edit()) {
-                        putString("auth_token", token)
-                        putString("email", username)
-                        putString("password", password)
+                        putString("AUTH_TOKEN", token)
+                        putString("EMAIL", username)
+                        putString("PASSWORD", password)
                         apply()
                     }
                     emit(Result.success(token))

@@ -3,7 +3,7 @@
 //import androidx.lifecycle.ViewModel
 //import androidx.lifecycle.liveData
 //import com.example.tlucontact.network.RetrofitClient
-//import com.example.tlucontact.network.RegisterRequest
+//import com.example.tlucontact.model.RegisterRequest
 //import kotlinx.coroutines.Dispatchers
 //import retrofit2.HttpException
 //import java.io.IOException

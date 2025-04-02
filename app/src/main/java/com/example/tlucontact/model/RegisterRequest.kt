@@ -1,4 +1,4 @@
-package com.example.tlucontact.network
+package com.example.tlucontact.model
 
 data class RegisterRequest(
     val username: String,

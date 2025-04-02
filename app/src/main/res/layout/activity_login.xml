@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/header_color"
-    tools:context=".activity.LoginActivity">
+    tools:context="com.example.tlucontact.activity.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView"

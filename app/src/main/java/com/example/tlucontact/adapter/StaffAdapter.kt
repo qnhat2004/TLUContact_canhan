@@ -3,10 +3,10 @@ package com.example.tlucontact.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tlucontact.databinding.HeaderItemBinding
-import com.example.tlucontact.databinding.StaffItemBinding
 import com.example.tlucontact.model.Staff
 import com.example.tlucontact.model.StaffListItem
+import com.example.tlucontact_canhan.databinding.HeaderItemBinding
+import com.example.tlucontact_canhan.databinding.StaffItemBinding
 
 class StaffAdapter(
     private var items: List<StaffListItem>,

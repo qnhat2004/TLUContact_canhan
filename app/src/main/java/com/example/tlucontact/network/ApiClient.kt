@@ -3,7 +3,8 @@ package com.example.tlucontact.network
 import com.example.tlucontact.model.Account
 import com.example.tlucontact.model.LoginRequest
 import com.example.tlucontact.model.LoginResponse
-import com.example.tlucontact.model.UnitItem
+import com.example.tlucontact.model.ContactUnit
+import com.example.tlucontact.model.RegisterRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Call
@@ -30,10 +31,10 @@ interface ApiClient {
         @Query("size") size: Int,
         @Query("eagerload") eagerload: Boolean,
 //        @Query("sort") sort: String,
-    ): Call<List<UnitItem>>
+    ): Call<List<ContactUnit>>
 
     @GET("api/units/{id}")
     fun getUnitById(
         @Path("id") id: Long,
-    ): Call<UnitItem>
+    ): Call<ContactUnit>
 }
