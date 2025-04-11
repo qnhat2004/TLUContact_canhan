@@ -8,6 +8,7 @@ import com.example.tlucontact_canhan.model.PageResponse
 import com.example.tlucontact_canhan.model.RegisterRequest
 import com.example.tlucontact_canhan.model.Staff
 import com.example.tlucontact_canhan.model.Student
+import com.example.tlucontact_canhan.model.UnitDetailDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -27,17 +28,18 @@ interface ApiClient {
     suspend fun register(@Body request: RegisterRequest): Unit
 
     // ----------- Unit API -----------
-    @GET("api/units")
-    suspend fun getUnits(
-        @Query("page") page: Int,
-        @Query("size") size: Int,
-        @Query("eagerload") eagerload: Boolean,
-    ): List<ContactUnit>
-
     @GET("api/units/{id}")
     suspend fun getUnitById(
         @Path("id") id: Long,
-    ): ContactUnit
+    ): UnitDetailDTO
+
+    @GET("api/units")
+    suspend fun getAllContactUnits(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: String?,
+        @Query("search") search: String? = null,
+    ): Response<List<UnitDetailDTO>>
 
     // ----------- Student API -----------
     @GET("api/students/{id}")

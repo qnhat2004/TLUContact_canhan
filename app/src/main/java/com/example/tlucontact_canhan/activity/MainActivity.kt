@@ -2,17 +2,14 @@ package com.example.tlucontact_canhan.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tlucontact.fragment.StudentFragment
 import com.example.tlucontact_canhan.StudentProfileFragment
 import com.example.tlucontact_canhan.fragment.StaffFragment
-import com.example.tlucontact_canhan.fragment.UnitFragment
+import com.example.tlucontact_canhan.fragment.ContactUnitFragment
 import com.example.tlucontact_canhan.R
 import com.example.tlucontact_canhan.databinding.ActivityMainBinding
 import com.example.tlucontact_canhan.repository.AuthRepository
-import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                .replace(R.id.fragment_container, UnitFragment())
+                .replace(R.id.fragment_container, ContactUnitFragment())
                 .addToBackStack(null)
                 .commit()
             binding.bottomNavigation.selectedItemId = R.id.nav_units
@@ -45,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_units -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, UnitFragment())
+                        .replace(R.id.fragment_container, ContactUnitFragment())
                         .addToBackStack(null)
                         .commit()
                     true

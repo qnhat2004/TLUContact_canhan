@@ -44,14 +44,14 @@
                 android:text="Tên đơn vị"/>
 
             <TextView
-                android:id="@+id/tvUnitPhone"
+                android:id="@+id/tvUnitCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#757575"
                 android:textSize="14sp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="Số điện thoại"/>
+                android:text="Mã đơn vị"/>
 
             <TextView
                 android:id="@+id/tvUnitEmail"

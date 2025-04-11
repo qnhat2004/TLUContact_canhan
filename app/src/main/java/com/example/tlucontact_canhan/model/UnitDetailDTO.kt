@@ -1,13 +1,14 @@
 package com.example.tlucontact_canhan.model
 
-data class ContactUnit(
+data class UnitDetailDTO(
     val id: Long,
     val unitCode: String,
     val name: String,
     val address: String,
-    val logoURL: String,
+    val logoUrl: String,
     val email: String,
     val fax: String,
-    val Type: String,
-    val parentUnitId: Long?,
+    val type: String,
+    val parentUnitId: Long,
+    val childUnitIds: List<Long>
 )

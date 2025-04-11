@@ -79,8 +79,7 @@
                     android:contentDescription="Gọi"
                     android:padding="12dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/phone_call"
-                    />
+                    android:src="@drawable/phone_call" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -107,8 +106,7 @@
                     android:contentDescription="Nhắn tin"
                     android:padding="12dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/speech_bubble"
-                     />
+                    android:src="@drawable/speech_bubble" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -123,8 +121,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginEnd="40dp"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageButton
@@ -135,8 +133,7 @@
                     android:contentDescription="Gửi email"
                     android:padding="12dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mail"
-                    />
+                    android:src="@drawable/mail" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,8 +159,7 @@
                     android:contentDescription="Share"
                     android:padding="12dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/share"
-                    />
+                    android:src="@drawable/share" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -280,6 +276,55 @@
                 android:textColor="#0285E4"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvParentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Đơn vị cha"
+                android:textColor="#000"
+                android:textSize="16sp" />
+
+            <!-- Parent Unit Link -->
+            <TextView
+                android:id="@+id/tvParentUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Parent Unit"
+                android:drawableEnd="@drawable/external_link"
+                android:drawablePadding="15dp"
+                android:textColor="#0285E4"
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/tvChildUnitsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Danh sách đơn vị con"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="16sp" />
+
+            <!-- Child Units List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvChildUnits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
