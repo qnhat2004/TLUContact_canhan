@@ -46,6 +46,7 @@ class UnitDetailActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
+
         binding.rvChildUnits.apply {
             layoutManager = LinearLayoutManager(this@UnitDetailActivity)
             adapter = childUnitAdapter
@@ -57,9 +58,6 @@ class UnitDetailActivity : AppCompatActivity() {
             finish() // Đóng Activity nếu không có unitId
             return
         }
-
-        // Hiển thị trạng thái tải
-        binding.progressBar.visibility = View.VISIBLE
 
         // Lấy chi tiết đơn vị
         coroutineScope.launch {
@@ -103,13 +101,18 @@ class UnitDetailActivity : AppCompatActivity() {
                     binding.tvParentLabel.visibility = View.GONE
                 }
 
-                // Hiển thị danh sách đơn vị con (nếu có)
-                if (unitDetail.childUnitIds.isNotEmpty()) {
+                // Safely handle null childUnitIds
+                val childUnitIds = unitDetail.childUnitIds ?: emptyList()
+
+                if (childUnitIds.isEmpty()) {
+                    binding.rvChildUnits.visibility = View.GONE
+                    binding.tvChildUnitsLabel.visibility = View.GONE
+                } else {
                     binding.rvChildUnits.visibility = View.VISIBLE
                     binding.tvChildUnitsLabel.visibility = View.VISIBLE
                     val childUnits = mutableListOf<UnitDetailDTO>()
-                    // Gọi API song song để lấy thông tin đơn vị con
-                    unitDetail.childUnitIds.map { childId ->
+                    // Fetch child units in parallel
+                    childUnitIds.map { childId ->
                         launch(Dispatchers.IO) {
                             val childResult = viewModel.getUnitById(childId)
                             childResult.onSuccess { childUnit ->
@@ -118,15 +121,12 @@ class UnitDetailActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    }.forEach { it.join() } // Đợi tất cả các coroutine hoàn thành
+                    }.forEach { it.join() } // Wait for all coroutines to complete
                     withContext(Dispatchers.Main) {
-                        // Chuyển đổi List<UnitDetailDTO> thành List<UnitListItem>
+                        // Convert List<UnitDetailDTO> to List<UnitListItem>
                         val unitListItems = childUnits.map { UnitListItem.Unit_(it) }
                         childUnitAdapter.updateItems(unitListItems)
                     }
-                } else {
-                    binding.rvChildUnits.visibility = View.GONE
-                    binding.tvChildUnitsLabel.visibility = View.GONE
                 }
 
                 // Nút gọi điện

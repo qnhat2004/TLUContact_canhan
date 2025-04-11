@@ -3,9 +3,9 @@ package com.example.tlucontact_canhan.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.tlucontact.fragment.StaffFragment
 import com.example.tlucontact.fragment.StudentFragment
 import com.example.tlucontact_canhan.StudentProfileFragment
-import com.example.tlucontact_canhan.fragment.StaffFragment
 import com.example.tlucontact_canhan.fragment.ContactUnitFragment
 import com.example.tlucontact_canhan.R
 import com.example.tlucontact_canhan.databinding.ActivityMainBinding

@@ -21,6 +21,7 @@
             android:layout_marginEnd="12dp"
             android:scaleType="centerCrop"
             android:src="@drawable/avatar"
+            android:id="@+id/iv_StaffAvatar"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Avatar"/>
 

@@ -27,7 +27,7 @@
             android:name="com.example.tlucontact_canhan.activity.UnitDetailActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.tlucontact_canhan.activity.StaffDetailtActivity"
+            android:name="com.example.tlucontact_canhan.activity.StaffDetailActivity"
             android:exported="false" />
         <activity
             android:name="com.example.tlucontact_canhan.activity.StudentDetailActivity"

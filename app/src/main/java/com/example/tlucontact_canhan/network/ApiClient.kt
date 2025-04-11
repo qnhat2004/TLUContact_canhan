@@ -61,8 +61,8 @@ interface ApiClient {
     ): Response<List<Student>>  // Response: trả về một danh sách sinh viên và mã trạng thái HTTP
 
     // ----------- Staff API -----------
-    @GET("api/staffs/{id}")
-    suspend fun getStafById(
+    @GET("api/staff/{id}")
+    suspend fun getStaffById(
         @Path("id") id: Long,
     ): Staff
 
@@ -70,4 +70,12 @@ interface ApiClient {
     suspend fun getStaffByUserId(
         @Path("id") id: Long,
     ): Staff
+
+    @GET("api/staff")
+    suspend fun getAllStaffs(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: String?,
+        @Query("search") search: String? = null,
+    ): Response<List<Staff>>  // Response: trả về một danh sách giảng viên và mã trạng thái HTTP
 }
