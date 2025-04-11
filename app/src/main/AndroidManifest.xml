@@ -30,6 +30,9 @@
             android:name="com.example.tlucontact_canhan.activity.StaffDetailtActivity"
             android:exported="false" />
         <activity
+            android:name="com.example.tlucontact_canhan.activity.StudentDetailActivity"
+            android:exported="false" />
+        <activity
             android:name="com.example.tlucontact_canhan.activity.RegisterActivity"
             android:exported="false" />
         <activity

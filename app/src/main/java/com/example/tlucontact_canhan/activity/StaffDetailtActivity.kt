@@ -26,6 +26,7 @@ class StaffDetailtActivity : AppCompatActivity() {
         binding.tvDetailtStaffUnit.text = unit
         binding.tvDetailtStaffPosition.text = position
 
+        // Nút gọi điện
         binding.btnUnitCall.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:$phone")

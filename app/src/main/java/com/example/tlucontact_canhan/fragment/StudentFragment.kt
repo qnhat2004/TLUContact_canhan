@@ -1,5 +1,6 @@
 package com.example.tlucontact.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tlucontact.adapter.StudentAdapter
 import com.example.tlucontact_canhan.R
+import com.example.tlucontact_canhan.activity.StudentDetailActivity
 import com.example.tlucontact_canhan.databinding.FragmentStudentBinding
 import com.example.tlucontact_canhan.model.StudentListItem
 import com.example.tlucontact_canhan.repository.StudentRepository
@@ -46,7 +48,17 @@ class StudentFragment : Fragment() {
         // Initialize RecyclerView and Adapter
         studentAdapter = StudentAdapter(emptyList()) { student ->
             // Handle student click
+            val intent = Intent(requireContext(), StudentDetailActivity::class.java).apply {
+                putExtra("student_id", student.Student.studentId)
+                putExtra("student_fullName", student.Student.fullName)
+                putExtra("student_phone", student.Student.phone)
+                putExtra("student_email", student.Student.email)
+                putExtra("student_address", student.Student.address)
+                putExtra("student_unit", student.Student.unit?.name ?: "Không có thông tin")
+            }
+            startActivity(intent) // Start the activity
         }
+
         binding.rvStudent.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = studentAdapter
