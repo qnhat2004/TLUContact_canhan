@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan
+package com.example.tlucontact_canhan.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tlucontact_canhan.databinding.ActivityStaffDetailBinding
 
-class StaffDetailtActivity: AppCompatActivity() {
+class StaffDetailtActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStaffDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +26,7 @@ class StaffDetailtActivity: AppCompatActivity() {
         binding.tvDetailtStaffUnit.text = unit
         binding.tvDetailtStaffPosition.text = position
 
+        // Nút gọi điện
         binding.btnUnitCall.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:$phone")
@@ -56,12 +57,12 @@ class StaffDetailtActivity: AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, """
-            Tên cán bộ nhân viên: $name
-            Email: $email
-            Số điện thoại: $phone
-            Chức vụ: $position
-            Đơn vị: $unit
-        """.trimIndent())
+                    Tên cán bộ nhân viên: $name
+                    Email: $email
+                    Số điện thoại: $phone
+                    Chức vụ: $position
+                    Đơn vị: $unit
+                """.trimIndent())
             }
             startActivity(Intent.createChooser(intent, "Chia sẻ thông tin CBGV"))
         }

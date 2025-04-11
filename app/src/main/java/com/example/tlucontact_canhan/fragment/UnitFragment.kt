@@ -10,12 +10,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tlucontact_canhan.UnitDetailActivity
+import com.example.tlucontact_canhan.activity.UnitDetailActivity
 import com.example.tlucontact_canhan.adapter.UnitAdapter
 import com.example.tlucontact_canhan.data.SampleData
-import com.example.tlucontact_canhan.databinding.FragmentUnitBinding
 import com.example.tlucontact_canhan.model.ContactUnit
 import com.example.tlucontact_canhan.model.UnitListItem
+import com.example.tlucontact_canhan.R
+import com.example.tlucontact_canhan.databinding.FragmentUnitBinding
 
 class UnitFragment : Fragment() {
     private var _binding: FragmentUnitBinding? = null
@@ -42,10 +43,9 @@ class UnitFragment : Fragment() {
         adapter = UnitAdapter(originalItems) { unit ->
             val intent = Intent(requireContext(), UnitDetailActivity::class.java).apply {
                 putExtra("unit_name", unit.contactUnit.name)
-                putExtra("unit_phone", unit.contactUnit.phone)
                 putExtra("unit_email", unit.contactUnit.email)
                 putExtra("unit_address", unit.contactUnit.address)
-                putExtra("unit_code", unit.contactUnit.code)
+                putExtra("unit_code", unit.contactUnit.unitCode)
                 putExtra("unit_fax", unit.contactUnit.fax)
             }
             startActivity(intent)
@@ -67,11 +67,12 @@ class UnitFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             isAscending = !isAscending
             binding.btnSort.setImageResource(
-                if (isAscending) com.example.tlucontact_canhan.R.drawable.ic_sort_ascending
-                else com.example.tlucontact_canhan.R.drawable.ic_sort_descending
+                if (isAscending) R.drawable.ic_sort_ascending
+                else R.drawable.ic_sort_descending
             )
             sortUnits()
-            Toast.makeText(requireContext(), "Đã sắp xếp ${if (isAscending) "A-Z" else "Z-A"}", Toast.LENGTH_SHORT).show()        }
+//            Toast.makeText(requireContext(), "Đã sắp xếp ${if (isAscending) "A-Z" else "Z-A"}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun groupUnitsByLetter(units: List<ContactUnit>): List<UnitListItem> {
@@ -94,8 +95,7 @@ class UnitFragment : Fragment() {
         } else {
             SampleData.units.filter {
                 it.name.contains(query, ignoreCase = true) ||
-                it.phone.contains(query) ||
-                it.email!!.contains(query, ignoreCase = true)
+                        it.email!!.contains(query, ignoreCase = true)
             }
         }
         val newItems = groupUnitsByLetter(if (isAscending) filteredUnits.sortedBy { it.name } else filteredUnits.sortedByDescending { it.name })

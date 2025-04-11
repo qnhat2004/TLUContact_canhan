@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tlucontact_canhan.data.SampleData
-import com.example.tlucontact_canhan.StaffDetailtActivity
+import com.example.tlucontact_canhan.activity.StaffDetailtActivity
 import com.example.tlucontact_canhan.adapter.StaffAdapter
-import com.example.tlucontact_canhan.databinding.FragmentStaffBinding
 import com.example.tlucontact_canhan.model.Staff
 import com.example.tlucontact_canhan.model.StaffListItem
-import com.example.tlucontact_canhan.model.UnitListItem
+import com.example.tlucontact_canhan.R
+import com.example.tlucontact_canhan.databinding.FragmentStaffBinding
 
 class StaffFragment : Fragment() {
     private var _binding: FragmentStaffBinding? = null
@@ -65,8 +65,8 @@ class StaffFragment : Fragment() {
         binding.btnSort.setOnClickListener {
             isAscending = !isAscending
             binding.btnSort.setImageResource(
-                if (isAscending) com.example.tlucontact_canhan.R.drawable.ic_sort_ascending
-                else com.example.tlucontact_canhan.R.drawable.ic_sort_descending
+                if (isAscending) R.drawable.ic_sort_ascending
+                else R.drawable.ic_sort_descending
             )
             sortStaffs()
         }
@@ -92,10 +92,10 @@ class StaffFragment : Fragment() {
         } else {
             SampleData.staffs.filter {
                 it.name.contains(query, ignoreCase = true) ||
-                it.phone.contains(query, ignoreCase = true) ||
-                it.email.contains(query, ignoreCase = true) ||
-                it.unit.contains(query, ignoreCase = true) ||
-                it.position.contains(query, ignoreCase = true)
+                        it.phone.contains(query, ignoreCase = true) ||
+                        it.email.contains(query, ignoreCase = true) ||
+                        it.unit.contains(query, ignoreCase = true) ||
+                        it.position.contains(query, ignoreCase = true)
             }
         }
         val groupedItems = groupStaffsByLetter(if (isAscending) filterdStaffs.sortedBy { it.name } else filterdStaffs.sortedByDescending { it.name })

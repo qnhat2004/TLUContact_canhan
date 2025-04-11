@@ -1,4 +1,4 @@
-package com.example.tlucontact_canhan
+package com.example.tlucontact_canhan.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -30,6 +30,7 @@ class UnitDetailActivity : AppCompatActivity() {
         binding.tvUnitAddress.text = unitAddress
         binding.tvUnitFax.text = unitFax
 
+        // Nút gọi điện
         binding.btnUnitCall.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:$unitPhone")
@@ -60,13 +61,13 @@ class UnitDetailActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, """
-            Tên đơn vị: $unitName
-            Mã đơn vị: $unitCode
-            Email: $unitEmail
-            Số điện thoại: $unitPhone
-            Địa chỉ: $unitAddress
-            Fax: $unitFax
-        """.trimIndent())
+                    Tên đơn vị: $unitName
+                    Mã đơn vị: $unitCode
+                    Email: $unitEmail
+                    Số điện thoại: $unitPhone
+                    Địa chỉ: $unitAddress
+                    Fax: $unitFax
+                """.trimIndent())
             }
             startActivity(Intent.createChooser(intent, "Chia sẻ thông tin đơn vị"))
         }

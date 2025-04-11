@@ -3,9 +3,9 @@ package com.example.tlucontact_canhan.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tlucontact_canhan.model.UnitListItem
 import com.example.tlucontact_canhan.databinding.HeaderItemBinding
 import com.example.tlucontact_canhan.databinding.UnitItemBinding
-import com.example.tlucontact_canhan.model.UnitListItem
 
 class UnitAdapter(
     private var items: List<UnitListItem>,
@@ -63,7 +63,6 @@ class UnitAdapter(
     class UnitViewHolder(private val binding: UnitItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(unit: UnitListItem.Unit) {
             binding.tvUnitName.text = unit.contactUnit.name
-            binding.tvUnitPhone.text = unit.contactUnit.phone
             binding.tvUnitEmail.text = unit.contactUnit.email
         }
     }

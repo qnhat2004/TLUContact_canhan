@@ -2,72 +2,97 @@ package com.example.tlucontact_canhan.data
 
 import com.example.tlucontact_canhan.model.ContactUnit
 import com.example.tlucontact_canhan.model.Staff
+import com.example.tlucontact_canhan.model.Type
 
 object SampleData {
     val units = listOf(
         ContactUnit(
-            "Khoa Công nghệ Thông tin",
-            "024 3852 1234",
-            "Nhà A1, ĐH Thủy Lợi",
-            "test@mail.com",
-            "CNTT",
-            "024 3852 5678"
-        ),
-        ContactUnit(
-            "Khoa Kỹ thuật Tài nguyên Nước",
-            "024 3852 5678",
-            "Nhà A2, ĐH Thủy Lợi",
-            "test@mail.com",
-            "CNTT",
-            "024 3852 5678"
-        ),
-        ContactUnit(
-            "Phòng Đào tạo",
-            "024 3852 9999",
-            "Nhà H1, ĐH Thủy Lợi",
-            "test@mail.com",
-            "CNTT",
-            "024 3852 5678"
-        ),
-        ContactUnit(
+            id = 1,
+            unitCode = "CNTT",
             name = "Khoa Công nghệ Thông tin",
-            phone = "0977889900",
+            address = "Nhà A1, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo1.png",
+            email = "test@mail.com",
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
+        ),
+        ContactUnit(
+            id = 2,
+            unitCode = "KTTNN",
+            name = "Khoa Kỹ thuật Tài nguyên Nước",
+            address = "Nhà A2, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo2.png",
+            email = "test@mail.com",
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
+        ),
+        ContactUnit(
+            id = 3,
+            unitCode = "DT",
+            name = "Phòng Đào tạo",
+            address = "Nhà H1, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo3.png",
+            email = "test@mail.com",
+            fax = "024 3852 5678",
+            Type = Type.PHONG_BAN,
+            parentUnit = null
+        ),
+        ContactUnit(
+            id = 4,
+            unitCode = "CNTT",
+            name = "Khoa Công nghệ Thông tin",
+            address = "Nhà A1, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo4.png",
             email = "cntt@university.edu.vn",
-            address = "Nhà A1, ĐH Thủy Lợi",
-            code = "CNTT",
-            fax = "024 3852 5678"
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
         ),
         ContactUnit(
+            id = 5,
+            unitCode = "CK",
             name = "Khoa Cơ khí",
-            phone = "0944556677",
+            address = "Nhà A1, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo5.png",
             email = "cokhi@university.edu.vn",
-            address = "Nhà A1, ĐH Thủy Lợi",
-            code = "CNTT",
-            fax = "024 3852 5678"
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
         ),
         ContactUnit(
+            id = 6,
+            unitCode = "DDT",
             name = "Khoa Điện - Điện tử",
-            phone = "0966123456",
+            address = "Nhà A1, ĐH Thủy Lợi",
+            logoURL = "https://example.com/logo6.png",
             email = "dientu@university.edu.vn",
-            address = "Nhà A1, ĐH Thủy Lợi",
-            code = "CNTT",
-            fax = "024 3852 5678"
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
         ),
         ContactUnit(
+            id = 7,
+            unitCode = "KT",
             name = "Khoa Kinh tế",
-            phone = "0922334455",
-            email = "kinhte@university.edu.vn",
             address = "Nhà A1, ĐH Thủy Lợi",
-            code = "CNTT",
-            fax = "024 3852 5678"
+            logoURL = "https://example.com/logo7.png",
+            email = "kinhte@university.edu.vn",
+            fax = "024 3852 5678",
+            Type = Type.KHOA,
+            parentUnit = null
         ),
         ContactUnit(
+            id = 8,
+            unitCode = "CTSV",
             name = "Phòng Công tác Sinh viên",
-            phone = "0922334455",
-            email = "phongcongtacsinhvien@university.edu.vn",
             address = "Nhà A1, ĐH Thủy Lợi",
-            code = "CNTT",
-            fax = "024 3852 5678"
+            logoURL = "https://example.com/logo8.png",
+            email = "phongcongtacsinhvien@university.edu.vn",
+            fax = "024 3852 5678",
+            Type = Type.PHONG_BAN,
+            parentUnit = null
         )
     )
 
