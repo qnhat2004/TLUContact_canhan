@@ -1,26 +1,35 @@
-//package com.example.tlucontact.viewmodel
-//
-//import androidx.lifecycle.ViewModel
-//import androidx.lifecycle.liveData
-//import com.example.tlucontact.network.RetrofitClient
-//import com.example.tlucontact.model.RegisterRequest
-//import kotlinx.coroutines.Dispatchers
-//import retrofit2.HttpException
-//import java.io.IOException
-//
-//class RegisterViewModel : ViewModel() {
-//    fun register(username: String, email: String, password: String) = liveData<Result<Unit>>(Dispatchers.IO) {
-//        try {
-//            val response = RetrofitClient.getInstance().create(ApiService::class.java).register(RegisterRequest(username, email, password)).execute()
-//            if (response.isSuccessful) {
-//                emit(Result.success(Unit))
-//            } else {
-//                emit(Result.failure<Unit>(HttpException(response)))
-//            }
-//        } catch (e: IOException) {
-//            emit(Result.failure<Unit>(e))
-//        } catch (e: HttpException) {
-//            emit(Result.failure<Unit>(e))
-//        }
-//    }
-//}
+package com.example.tlucontact_canhan.viewmodel
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.tlucontact_canhan.model.RegisterRequest
+import com.example.tlucontact_canhan.repository.AuthRepository
+import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
+
+sealed class RegisterState<out T> {
+    object Loading : RegisterState<Nothing>()
+    data class Success<T>(val data: T) : RegisterState<T>()
+    data class Error(val exception: Throwable) : RegisterState<Nothing>()
+}
+
+class RegisterViewModel(private val authRepository: AuthRepository) : ViewModel() {
+    private val _registerResult = MutableLiveData<RegisterState<String>>()
+    val registerResult: LiveData<RegisterState<String>> get() = _registerResult
+
+    fun register(username: String, password: String) {
+        viewModelScope.launch {
+            _registerResult.value = RegisterState.Loading
+            val registerRequest = RegisterRequest(username, password)
+            val result = authRepository.register(registerRequest)
+            _registerResult.value = if (result.isSuccess) {
+                RegisterState.Success(result.getOrNull()!!.id_token)
+            } else {
+                Log.e("RegisterViewModel", "Register failed: ${result.exceptionOrNull()?.message}")
+                RegisterState.Error(result.exceptionOrNull()!!)
+            }
+        }
+    }
+}

@@ -3,14 +3,15 @@ package com.example.tlucontact_canhan.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.tlucontact.adapter.ContactUnitAdapter
 import com.example.tlucontact_canhan.R
-import com.example.tlucontact_canhan.adapter.ContactUnitAdapter
 import com.example.tlucontact_canhan.databinding.ActivityUnitDetailBinding
 import com.example.tlucontact_canhan.model.UnitDetailDTO
 import com.example.tlucontact_canhan.model.UnitListItem
@@ -55,16 +56,20 @@ class UnitDetailActivity : AppCompatActivity() {
         // Lấy unitId từ Intent
         val unitId = intent.getLongExtra("unit_id", -1)
         if (unitId == -1L) {
-            finish() // Đóng Activity nếu không có unitId
+            Toast.makeText(this, "Không tìm thấy ID đơn vị!", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
 
         // Lấy chi tiết đơn vị
         coroutineScope.launch {
+            binding.progressBar.visibility = View.VISIBLE
             val result = viewModel.getUnitById(unitId)
             binding.progressBar.visibility = View.GONE
 
             result.onSuccess { unitDetail ->
+                Log.d("UnitDetailActivity", "Unit Detail: $unitDetail")
+
                 // Hiển thị thông tin đơn vị
                 binding.tvUnitName.text = unitDetail.name
                 binding.tvUnitCode.text = unitDetail.unitCode
@@ -83,9 +88,12 @@ class UnitDetailActivity : AppCompatActivity() {
 
                 // Hiển thị đơn vị cha (nếu có)
                 if (unitDetail.parentUnitId != null) {
+                    Log.d("UnitDetailActivity", "Parent Unit ID: ${unitDetail.parentUnitId}")
                     binding.tvParentUnit.visibility = View.VISIBLE
+                    binding.tvParentLabel.visibility = View.VISIBLE
                     val parentResult = viewModel.getUnitById(unitDetail.parentUnitId!!)
                     parentResult.onSuccess { parentUnit ->
+                        Log.d("Parent id", "Parent Unit: ${parentUnit.id}")
                         binding.tvParentUnit.text = parentUnit.name
                         binding.tvParentUnit.setOnClickListener {
                             val intent = Intent(this@UnitDetailActivity, UnitDetailActivity::class.java).apply {
@@ -93,18 +101,22 @@ class UnitDetailActivity : AppCompatActivity() {
                             }
                             startActivity(intent)
                         }
-                    }.onFailure {
+                    }.onFailure { exception ->
+                        Log.e("UnitDetailActivity", "Failed to load parent unit: ${exception.message}")
                         binding.tvParentUnit.text = "Không thể tải đơn vị cha"
                     }
                 } else {
+                    Log.d("UnitDetailActivity", "No parent unit found")
                     binding.tvParentUnit.visibility = View.GONE
                     binding.tvParentLabel.visibility = View.GONE
                 }
 
                 // Safely handle null childUnitIds
                 val childUnitIds = unitDetail.childUnitIds ?: emptyList()
+                Log.d("UnitDetailActivity", "Child Unit IDs: $childUnitIds")
 
                 if (childUnitIds.isEmpty()) {
+                    Log.d("UnitDetailActivity", "No child units found")
                     binding.rvChildUnits.visibility = View.GONE
                     binding.tvChildUnitsLabel.visibility = View.GONE
                 } else {
@@ -116,13 +128,17 @@ class UnitDetailActivity : AppCompatActivity() {
                         launch(Dispatchers.IO) {
                             val childResult = viewModel.getUnitById(childId)
                             childResult.onSuccess { childUnit ->
+                                Log.d("UnitDetailActivity", "Child Unit: $childUnit")
                                 synchronized(childUnits) {
                                     childUnits.add(childUnit)
                                 }
+                            }.onFailure { exception ->
+                                Log.e("UnitDetailActivity", "Failed to load child unit $childId: ${exception.message}")
                             }
                         }
                     }.forEach { it.join() } // Wait for all coroutines to complete
                     withContext(Dispatchers.Main) {
+                        Log.d("UnitDetailActivity", "Child Units Loaded: $childUnits")
                         // Convert List<UnitDetailDTO> to List<UnitListItem>
                         val unitListItems = childUnits.map { UnitListItem.Unit_(it) }
                         childUnitAdapter.updateItems(unitListItems)
@@ -131,7 +147,6 @@ class UnitDetailActivity : AppCompatActivity() {
 
                 // Nút gọi điện
                 binding.btnUnitCall.setOnClickListener {
-                    // Giả định rằng UnitDetailDTO sẽ được cập nhật để có trường phone
                     Toast.makeText(this@UnitDetailActivity, "Chức năng gọi điện chưa được triển khai (thiếu trường phone)", Toast.LENGTH_SHORT).show()
                 }
 
@@ -150,7 +165,6 @@ class UnitDetailActivity : AppCompatActivity() {
 
                 // Nút Nhắn tin
                 binding.btnUnitMessage.setOnClickListener {
-                    // Giả định rằng UnitDetailDTO sẽ được cập nhật để có trường phone
                     Toast.makeText(this@UnitDetailActivity, "Chức năng nhắn tin chưa được triển khai (thiếu trường phone)", Toast.LENGTH_SHORT).show()
                 }
 
@@ -169,6 +183,7 @@ class UnitDetailActivity : AppCompatActivity() {
                     startActivity(Intent.createChooser(intent, "Chia sẻ thông tin đơn vị"))
                 }
             }.onFailure { exception ->
+                Log.e("UnitDetailActivity", "Failed to load unit: ${exception.message}")
                 Toast.makeText(this@UnitDetailActivity, "Lỗi: ${exception.message}", Toast.LENGTH_LONG).show()
             }
         }

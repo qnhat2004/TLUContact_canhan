@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.tlucontact_canhan.databinding.HeaderItemBinding
 import com.example.tlucontact_canhan.databinding.StudentItemBinding
 import com.example.tlucontact_canhan.model.StudentListItem
@@ -99,6 +100,10 @@ class StudentAdapter(
             binding.tvStudentName.text = student.Student.fullName
             binding.tvStudentPhone.text = student.Student.phone
             binding.tvStudentEmail.text = student.Student.email
+            // Set image
+            Glide.with(binding.ivStudentAvatar.context)
+                .load(student.Student.avatarUrl)
+                .into(binding.ivStudentAvatar)
         }
     }
 }

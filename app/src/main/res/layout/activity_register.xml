@@ -33,7 +33,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/etEmail_register"
+            android:id="@+id/etEmailRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -45,35 +45,9 @@
             android:inputType="textEmailAddress"
             android:padding="13dp" />
 
-        <EditText
-            android:id="@+id/etName_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edittext"
-            android:drawableLeft="@drawable/user"
-            android:drawablePadding="15dp"
-            android:ems="10"
-            android:hint="Họ và tên"
-            android:inputType="textPersonName"
-            android:padding="12dp"
-            android:layout_marginTop="14dp"/>
-
 
         <EditText
-            android:id="@+id/etPhone_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_edittext"
-            android:drawableLeft="@drawable/ic_baseline_phone"
-            android:drawablePadding="15dp"
-            android:ems="10"
-            android:hint="Số điện thoại"
-            android:inputType="textEmailAddress"
-            android:padding="13dp"
-            android:layout_marginTop="12dp"/>
-
-        <EditText
-            android:id="@+id/etPassword_register"
+            android:id="@+id/etPasswordRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -86,7 +60,7 @@
             android:padding="13dp" />
 
         <EditText
-            android:id="@+id/etPassword_reenter"
+            android:id="@+id/etPasswordConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -116,6 +90,27 @@
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/txtGoToLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã có tài khoản? Đăng nhập"
+            android:textColor="@color/blue"
+            android:textSize="14sp"
+            android:paddingTop="10dp"
+            android:layout_weight="1"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </LinearLayout>
 
 
