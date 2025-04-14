@@ -51,4 +51,18 @@ class StudentRepository(private val context: Context) {
             Result.failure(e)
         }
     }
+
+    suspend fun getAllStudentsByUnitId(): Result<List<Student>> {
+        return try {
+            val response = apiClient.getAllStudentsByUnitId()
+            if (response.isSuccessful) {
+                val students = response.body() ?: emptyList()
+                Result.success(students)
+            } else {
+                Result.failure(Exception("Error: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

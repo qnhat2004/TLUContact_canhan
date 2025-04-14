@@ -21,6 +21,7 @@ import com.example.tlucontact_canhan.viewmodel.ContactUnitViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -86,14 +87,15 @@ class UnitDetailActivity : AppCompatActivity() {
                         .into(binding.ivUnitImage)
                 }
 
-                // Hiển thị đơn vị cha (nếu có)
-                if (unitDetail.parentUnitId != null) {
-                    Log.d("UnitDetailActivity", "Parent Unit ID: ${unitDetail.parentUnitId}")
+                if (unitDetail.parentUnit?.id != null && unitDetail.parentUnit?.id != 0L) { // Thêm kiểm tra parentUnitId != 0
+                    Log.d("UnitDetailActivity", "Parent Unit ID: ${unitDetail.parentUnit?.id}")
                     binding.tvParentUnit.visibility = View.VISIBLE
                     binding.tvParentLabel.visibility = View.VISIBLE
-                    val parentResult = viewModel.getUnitById(unitDetail.parentUnitId!!)
+                    val parentResult = withContext(Dispatchers.IO) {
+                        viewModel.getUnitById(unitDetail.parentUnit?.id!!)
+                    }
                     parentResult.onSuccess { parentUnit ->
-                        Log.d("Parent id", "Parent Unit: ${parentUnit.id}")
+                        Log.d("UnitDetailActivity", "Parent Unit Loaded: ${parentUnit.id} - ${parentUnit.name}")
                         binding.tvParentUnit.text = parentUnit.name
                         binding.tvParentUnit.setOnClickListener {
                             val intent = Intent(this@UnitDetailActivity, UnitDetailActivity::class.java).apply {
@@ -102,16 +104,21 @@ class UnitDetailActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                     }.onFailure { exception ->
-                        Log.e("UnitDetailActivity", "Failed to load parent unit: ${exception.message}")
+                        Log.e("UnitDetailActivity", "Failed to load parent unit: ${exception.message}", exception)
+                        Toast.makeText(
+                            this@UnitDetailActivity,
+                            "Không thể tải đơn vị cha: ${exception.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                         binding.tvParentUnit.text = "Không thể tải đơn vị cha"
                     }
                 } else {
-                    Log.d("UnitDetailActivity", "No parent unit found")
+                    Log.d("UnitDetailActivity", "No parent unit found (parentUnitId: ${unitDetail.parentUnit?.id})")
                     binding.tvParentUnit.visibility = View.GONE
                     binding.tvParentLabel.visibility = View.GONE
                 }
 
-                // Safely handle null childUnitIds
+                // Hiển thị danh sách đơn vị con
                 val childUnitIds = unitDetail.childUnitIds ?: emptyList()
                 Log.d("UnitDetailActivity", "Child Unit IDs: $childUnitIds")
 
@@ -122,26 +129,44 @@ class UnitDetailActivity : AppCompatActivity() {
                 } else {
                     binding.rvChildUnits.visibility = View.VISIBLE
                     binding.tvChildUnitsLabel.visibility = View.VISIBLE
-                    val childUnits = mutableListOf<UnitDetailDTO>()
-                    // Fetch child units in parallel
-                    childUnitIds.map { childId ->
-                        launch(Dispatchers.IO) {
-                            val childResult = viewModel.getUnitById(childId)
-                            childResult.onSuccess { childUnit ->
-                                Log.d("UnitDetailActivity", "Child Unit: $childUnit")
-                                synchronized(childUnits) {
-                                    childUnits.add(childUnit)
-                                }
-                            }.onFailure { exception ->
-                                Log.e("UnitDetailActivity", "Failed to load child unit $childId: ${exception.message}")
+                    try {
+                        // Lấy danh sách đơn vị con
+                        val childUnits = mutableListOf<UnitDetailDTO>()
+                        val childResults = childUnitIds.map { childId ->
+                            async (Dispatchers.IO) {
+                                viewModel.getUnitById(childId)
                             }
                         }
-                    }.forEach { it.join() } // Wait for all coroutines to complete
-                    withContext(Dispatchers.Main) {
-                        Log.d("UnitDetailActivity", "Child Units Loaded: $childUnits")
-                        // Convert List<UnitDetailDTO> to List<UnitListItem>
-                        val unitListItems = childUnits.map { UnitListItem.Unit_(it) }
-                        childUnitAdapter.updateItems(unitListItems)
+                        childResults.forEach { deferred ->
+                            val childResult = deferred.await()
+                            childResult.onSuccess { childUnit ->
+                                Log.d("UnitDetailActivity", "Child Unit Loaded: ${childUnit.id} - ${childUnit.name}")
+                                childUnits.add(childUnit)
+                            }.onFailure { exception ->
+                                Log.e("UnitDetailActivity", "Failed to load child unit: ${exception.message}")
+                            }
+                        }
+                        if (childUnits.isEmpty()) {
+                            Toast.makeText(
+                                this@UnitDetailActivity,
+                                "Không thể tải danh sách đơn vị con",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            binding.rvChildUnits.visibility = View.GONE
+                            binding.tvChildUnitsLabel.visibility = View.GONE
+                        } else {
+                            val unitListItems = childUnits.map { UnitListItem.Unit_(it) }
+                            childUnitAdapter.updateItems(unitListItems)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("UnitDetailActivity", "Error loading child units: ${e.message}", e)
+                        Toast.makeText(
+                            this@UnitDetailActivity,
+                            "Lỗi khi tải danh sách đơn vị con: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        binding.rvChildUnits.visibility = View.GONE
+                        binding.tvChildUnitsLabel.visibility = View.GONE
                     }
                 }
 
@@ -183,8 +208,9 @@ class UnitDetailActivity : AppCompatActivity() {
                     startActivity(Intent.createChooser(intent, "Chia sẻ thông tin đơn vị"))
                 }
             }.onFailure { exception ->
-                Log.e("UnitDetailActivity", "Failed to load unit: ${exception.message}")
+                Log.e("UnitDetailActivity", "Failed to load unit: ${exception.message}", exception)
                 Toast.makeText(this@UnitDetailActivity, "Lỗi: ${exception.message}", Toast.LENGTH_LONG).show()
+                finish()
             }
         }
 

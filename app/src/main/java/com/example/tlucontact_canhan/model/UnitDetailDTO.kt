@@ -9,6 +9,6 @@ data class UnitDetailDTO(
     val email: String,
     val fax: String,
     val type: String,
-    val parentUnitId: Long,
+    val parentUnit: ContactUnit?,
     val childUnitIds: List<Long>
 )

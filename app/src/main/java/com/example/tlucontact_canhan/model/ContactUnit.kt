@@ -9,5 +9,5 @@ data class ContactUnit(
     val email: String,
     val fax: String,
     val Type: String,
-    val parentUnitId: Long?,
+    val parentUnit: ContactUnit?,
 )

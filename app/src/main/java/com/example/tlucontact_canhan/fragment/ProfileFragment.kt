@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.tlucontact_canhan.activity.LoginActivity
 import com.example.tlucontact_canhan.activity.UnitDetailActivity
+import com.example.tlucontact_canhan.activity.UpdateProfileActivity
 import com.example.tlucontact_canhan.databinding.FragmentProfileBinding
 import com.example.tlucontact_canhan.repository.AuthRepository
 import com.example.tlucontact_canhan.repository.StaffRepository
@@ -58,55 +60,59 @@ class ProfileFragment : Fragment() {
             when (state) {
                 is AccountProfileState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
-                    Toast.makeText(requireContext(), "Đang tải thông tin...", Toast.LENGTH_SHORT).show()
                 }
                 is AccountProfileState.StudentSuccess -> {
                     binding.progressBar.visibility = View.GONE
                     val accountStudent = state.data
+
                     // Hiển thị thông tin tài khoản
-                    binding.tvName.text = accountStudent.account.login
+                    binding.tvName.text = accountStudent.student.fullName
                     binding.tvEmail.text = accountStudent.account.email
 
-                    // Ẩn thông tin Staff, hiển thị thông tin Student
-                    binding.tvDetailtStaffPhone.visibility = View.GONE
-                    binding.tvDetailtStaffEmail.visibility = View.GONE
-                    binding.tvDetailtStaffCode.visibility = View.GONE
-                    binding.tvDetailtStaffPosition.visibility = View.GONE
-                    binding.tvDetailtStaffEducation.visibility = View.GONE
-                    binding.tvDetailtStaffAddress.visibility = View.GONE
-                    binding.tvDetailtStaffUnit.visibility = View.GONE
+                    // Hiển thị layout cho sinh viên, ẩn layout cho giảng viên
+                    binding.layoutStudentInfo.visibility = View.VISIBLE
+                    binding.layoutStaffInfo.visibility = View.GONE
 
-                    // Hiển thị thông tin Student
+                    // Hiển thị thông tin sinh viên
                     binding.tvDetailtStudentId.text = accountStudent.student.studentId ?: "N/A"
                     binding.tvDetailtStudentPhone.text = accountStudent.student.phone ?: "N/A"
                     binding.tvDetailtStudentEmail.text = accountStudent.student.email ?: "N/A"
                     binding.tvDetailtStudentAddress.text = accountStudent.student.address ?: "N/A"
                     binding.tvDetailtStudentUnit.text = accountStudent.student.unit?.name ?: "N/A"
+
+                    // Hiển thị ảnh đại diện của sinh viên
+                    val avatarUrl = accountStudent.student.avatarUrl
+                    if (avatarUrl != null) {
+                        Glide.with(requireContext())
+                            .load(avatarUrl)
+                            .placeholder(R.drawable.avatar)
+                            .into(binding.ivAvatar)
+                    } else {
+                        binding.ivAvatar.setImageResource(R.drawable.avatar)
+                    }
                 }
                 is AccountProfileState.StaffSuccess -> {
                     binding.progressBar.visibility = View.GONE
                     val accountStaff = state.data
+
                     // Hiển thị thông tin tài khoản
-                    binding.tvName.text = accountStaff.account.login
+                    binding.tvName.text = accountStaff.staff.fullName
                     binding.tvEmail.text = accountStaff.account.email
 
-                    // Ẩn thông tin Student, hiển thị thông tin Staff
-                    binding.tvDetailtStudentId.visibility = View.GONE
-                    binding.tvDetailtStudentPhone.visibility = View.GONE
-                    binding.tvDetailtStudentEmail.visibility = View.GONE
-                    binding.tvDetailtStudentAddress.visibility = View.GONE
-                    binding.tvDetailtStudentUnit.visibility = View.GONE
+                    // Hiển thị layout cho giảng viên, ẩn layout cho sinh viên
+                    binding.layoutStudentInfo.visibility = View.GONE
+                    binding.layoutStaffInfo.visibility = View.VISIBLE
 
-                    // Hiển thị thông tin Staff
+                    // Hiển thị thông tin giảng viên
+                    binding.tvDetailtStaffCode.text = accountStaff.staff.staffId ?: "N/A"
                     binding.tvDetailtStaffPhone.text = accountStaff.staff.phone ?: "N/A"
                     binding.tvDetailtStaffEmail.text = accountStaff.staff.email ?: "N/A"
-                    binding.tvDetailtStaffCode.text = accountStaff.staff.staffId ?: "N/A"
                     binding.tvDetailtStaffPosition.text = accountStaff.staff.position ?: "N/A"
                     binding.tvDetailtStaffEducation.text = accountStaff.staff.education ?: "N/A"
                     binding.tvDetailtStaffAddress.text = accountStaff.staff.address ?: "N/A"
                     binding.tvDetailtStaffUnit.text = accountStaff.staff.unit?.name ?: "N/A"
 
-                    // Thêm sự kiện nhấn vào đơn vị của Staff để xem chi tiết đơn vị
+                    // Thêm sự kiện nhấn vào đơn vị của giảng viên để xem chi tiết đơn vị
                     binding.tvDetailtStaffUnit.setOnClickListener {
                         if (accountStaff.staff.unit != null) {
                             val intent = Intent(requireContext(), UnitDetailActivity::class.java).apply {
@@ -114,6 +120,17 @@ class ProfileFragment : Fragment() {
                             }
                             startActivity(intent)
                         }
+                    }
+
+                    // Hiển thị ảnh đại diện của giảng viên (nếu có)
+                    val avatarUrl = accountStaff.staff.avatarUrl
+                    if (avatarUrl != null) {
+                        Glide.with(requireContext())
+                            .load(avatarUrl)
+                            .placeholder(R.drawable.avatar)
+                            .into(binding.ivAvatar)
+                    } else {
+                        binding.ivAvatar.setImageResource(R.drawable.avatar)
                     }
                 }
                 is AccountProfileState.Error -> {
@@ -131,7 +148,8 @@ class ProfileFragment : Fragment() {
         // Xử lý nút "Cập nhật thông tin cá nhân"
         binding.btnUpdateProfile.setOnClickListener {
             Toast.makeText(requireContext(), "Chức năng cập nhật thông tin đang phát triển", Toast.LENGTH_SHORT).show()
-            // TODO: Chuyển đến màn hình cập nhật thông tin (UpdateProfileActivity)
+//            val intent = Intent(requireContext(), UpdateProfileActivity::class.java)
+//            startActivity(intent)
         }
 
         // Xử lý nút "Đăng xuất"

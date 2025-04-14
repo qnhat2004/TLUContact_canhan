@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,11 @@ import com.example.tlucontact_canhan.R
 import com.example.tlucontact_canhan.activity.StudentDetailActivity
 import com.example.tlucontact_canhan.databinding.FragmentStudentBinding
 import com.example.tlucontact_canhan.model.StudentListItem
+import com.example.tlucontact_canhan.repository.AuthRepository
 import com.example.tlucontact_canhan.repository.StudentRepository
 import com.example.tlucontact_canhan.viewmodel.StudentViewModel
 import com.example.tlucontact_canhan.viewmodel.StudentViewModelFactory
+import kotlinx.coroutines.runBlocking
 
 class StudentFragment : Fragment() {
     private lateinit var viewModel: StudentViewModel
@@ -41,9 +44,24 @@ class StudentFragment : Fragment() {
 
         sortDirection = "asc" // Default sort direction
 
+        // Khởi tạo authRepository
+        val authRepository = AuthRepository(requireContext())
+
+        // Kiểm tra vai trò người dùng
+        val userRole = runBlocking { authRepository.getAccountInfo().getOrNull()?.authorities?.contains("ROLE_USER") }
+        Log.d("StudentFragment", "User role: $userRole")
+
+        if (userRole == null) {
+            Toast.makeText(context, "Không thể xác định vai trò người dùng!", Toast.LENGTH_LONG).show()
+            requireActivity().finish()
+            return
+        }
+
         // Initialize ViewModel
-        viewModel = ViewModelProvider(this, StudentViewModelFactory(StudentRepository(requireContext())))
-            .get(StudentViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this,
+            StudentViewModelFactory(StudentRepository(requireContext()))
+        ).get(StudentViewModel::class.java)
 
         // Initialize RecyclerView and Adapter
         studentAdapter = StudentAdapter(emptyList()) { student ->
@@ -54,7 +72,8 @@ class StudentFragment : Fragment() {
                 putExtra("student_phone", student.Student.phone)
                 putExtra("student_email", student.Student.email)
                 putExtra("student_address", student.Student.address)
-                putExtra("student_unit", student.Student.unit?.name ?: "Không có thông tin")
+                putExtra("student_unit", student.Student.unit?.id?.toString() ?: "Không có thông tin")
+                putExtra("student_avatarUrl", student.Student.avatarUrl)
             }
             startActivity(intent) // Start the activity
         }
@@ -68,6 +87,7 @@ class StudentFragment : Fragment() {
         viewModel.students.observe(viewLifecycleOwner) { students ->
             studentAdapter.updateItems(students)
             binding.rvStudent.scrollToPosition(0)
+            Log.d("StudentFragment", "Student list updated: ${students.size} items")
         }
 
         // Observe loading state
@@ -79,7 +99,12 @@ class StudentFragment : Fragment() {
         // Observe error
         viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                if (it.contains("Không thể xác định lớp của bạn")) {
+                    // Nếu không lấy được classId, không hiển thị danh sách và thoát
+                    studentAdapter.updateItems(emptyList())
+                    binding.rvStudent.visibility = View.GONE
+                }
             }
         }
 

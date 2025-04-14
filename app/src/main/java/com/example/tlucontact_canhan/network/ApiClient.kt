@@ -14,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -61,13 +62,16 @@ interface ApiClient {
         @Path("id") id: Long,
     ): Student
 
+    @GET("api/students/studentUnit")
+    suspend fun getAllStudentsByUnitId(): Response<List<Student>>  // Response: trả về một danh sách sinh viên và mã trạng thái HTTP
+
     // ----------- Staff API -----------
     @GET("api/staff/{id}")
     suspend fun getStaffById(
         @Path("id") id: Long,
     ): Staff
 
-    @GET("api/staff/staffUser/{id}")
+    @GET("api/staff/user/{id}")
     suspend fun getStaffByUserId(
         @Path("id") id: Long,
     ): Staff
