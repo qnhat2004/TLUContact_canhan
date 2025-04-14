@@ -3,13 +3,15 @@ package com.example.tlucontact_canhan.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.tlucontact.fragment.StaffFragment
 import com.example.tlucontact.fragment.StudentFragment
-import com.example.tlucontact_canhan.StudentProfileFragment
-import com.example.tlucontact_canhan.fragment.StaffFragment
+import com.example.tlucontact_canhan.ProfileFragment
 import com.example.tlucontact_canhan.fragment.ContactUnitFragment
 import com.example.tlucontact_canhan.R
 import com.example.tlucontact_canhan.databinding.ActivityMainBinding
 import com.example.tlucontact_canhan.repository.AuthRepository
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -63,12 +65,26 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, StudentProfileFragment())
+                        .replace(R.id.fragment_container, ProfileFragment())
                         .addToBackStack(null)
                         .commit()
                     true
                 }
                 else -> false
+            }
+        }
+
+        lifecycleScope.launch {
+            val result = authRepository.getAccountInfo()
+            if (result.isSuccess) {
+                val account = result.getOrNull()
+                val authorities = account?.authorities ?: emptyList() // List<String> containing roles
+                if (authorities.contains("ROLE_STUDENT")) {
+                    binding.bottomNavigation.menu.removeItem(R.id.nav_staff)
+                }
+            } else {
+                val error = result.exceptionOrNull()
+                // Handle the error if needed
             }
         }
     }

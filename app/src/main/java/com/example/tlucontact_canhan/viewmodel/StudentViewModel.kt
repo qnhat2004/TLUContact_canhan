@@ -1,21 +1,28 @@
 package com.example.tlucontact_canhan.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tlucontact_canhan.model.Account
+import com.example.tlucontact_canhan.model.PageResponse
 import com.example.tlucontact_canhan.model.Student
 import com.example.tlucontact_canhan.model.StudentListItem
+import com.example.tlucontact_canhan.repository.AuthRepository
 import com.example.tlucontact_canhan.repository.StudentRepository
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
-class StudentViewModel(private val repository: StudentRepository) : ViewModel() {
+class StudentViewModel(
+    private val repository: StudentRepository,
+) : ViewModel() {
+
     private val _students = MutableLiveData<List<StudentListItem>>(emptyList())
     val students: LiveData<List<StudentListItem>> get() = _students
 
@@ -25,8 +32,8 @@ class StudentViewModel(private val repository: StudentRepository) : ViewModel() 
     private val _hasMoreData = MutableLiveData(true)
     val hasMoreData: LiveData<Boolean> get() = _hasMoreData
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
 
     // Quản lý tiêu chí sắp xếp
     private var sortField: String? = "fullName" // Mặc định sắp xếp theo fullName
@@ -68,25 +75,28 @@ class StudentViewModel(private val repository: StudentRepository) : ViewModel() 
 
     // Tải trang tiếp theo
     fun loadNextPage() {
-        if (!_hasMoreData.value!! || _isLoading.value == true) return
+        if (_isLoading.value == true || _hasMoreData.value == false) return
 
         viewModelScope.launch {
             _isLoading.value = true
-            val sortParam = if (sortField != null) "$sortField,$sortDirection" else null
-            val result = repository.getAllStudents(currentPage, pageSize, sortParam)
-            _isLoading.value = false
-
-            result.onSuccess { pageResponse ->
-                val currentList = _students.value ?: emptyList()
-                // Thêm dữ liệu mới vào danh sách gốc
-                originalStudents.addAll(pageResponse.content)
-                // Cập nhật danh sách hiển thị dựa trên query hiện tại
-                searchStudentsInternal(searchQueryFlow.value)
-                currentPage++
-                totalPages = pageResponse.totalPages
-                _hasMoreData.value = currentPage < totalPages
-            }.onFailure { exception ->
-                _error.value = "Lỗi khi tải dữ liệu: ${exception.message}"
+            try {
+                val response = repository.getAllStudentsByUnitId()
+                if (response.isSuccess) {
+                    val students = response.getOrNull() ?: emptyList()
+                    if (students.isNotEmpty()) {
+                        originalStudents.addAll(students)
+                        searchStudentsInternal(searchQueryFlow.value)
+                        _hasMoreData.value = students.size >= pageSize
+                    } else {
+                        _hasMoreData.value = false
+                    }
+                } else {
+                    _error.value = "Error: ${response.exceptionOrNull()?.message}"
+                }
+            } catch (e: Exception) {
+                _error.value = "Exception: ${e.message}"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -103,8 +113,8 @@ class StudentViewModel(private val repository: StudentRepository) : ViewModel() 
         } else {
             originalStudents.filter {
                 it.fullName.contains(query, ignoreCase = true) ||
-                        it.phone.contains(query, ignoreCase = true) ||
-                        it.email.contains(query, ignoreCase = true)
+                (it.phone?.contains(query, ignoreCase = true) == true) ||
+                (it.email?.contains(query, ignoreCase = true) == true)
             }
         }
         val newItems = convertToStudentListItems(filteredStudents)

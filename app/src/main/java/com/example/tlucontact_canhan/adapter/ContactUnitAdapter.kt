@@ -1,31 +1,22 @@
-package com.example.tlucontact_canhan.adapter
+package com.example.tlucontact.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tlucontact_canhan.R
+import com.bumptech.glide.Glide
+import com.example.tlucontact_canhan.databinding.HeaderItemBinding
+import com.example.tlucontact_canhan.databinding.UnitItemBinding
 import com.example.tlucontact_canhan.model.UnitListItem
 
 class ContactUnitAdapter(
     private var items: List<UnitListItem>,
-    private val onItemClick: (UnitListItem.Unit_) -> Unit
+    private val onClick: (UnitListItem.Unit_) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private const val TYPE_HEADER = 0
         private const val TYPE_UNIT = 1
-    }
-
-    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvHeader: TextView = itemView.findViewById(R.id.tvHeader)
-    }
-
-    class UnitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvUnitName: TextView = itemView.findViewById(R.id.tvUnitName)
-        val tvUnitCode: TextView = itemView.findViewById(R.id.tvUnitCode)
-        val tvUnitEmail: TextView = itemView.findViewById(R.id.tvUnitEmail)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -38,33 +29,27 @@ class ContactUnitAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_HEADER -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.header_item, parent, false)
-                HeaderViewHolder(view)
+                val binding = HeaderItemBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+                HeaderViewHolder(binding)
             }
-            TYPE_UNIT -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.unit_item, parent, false)
-                UnitViewHolder(view)
+
+            else -> {
+                val binding = UnitItemBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+                UnitViewHolder(binding)
             }
-            else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = items[position]) {
-            is UnitListItem.Header -> {
-                val headerHolder = holder as HeaderViewHolder
-                headerHolder.tvHeader.text = item.letter
-            }
+            is UnitListItem.Header -> (holder as HeaderViewHolder).bind(item)
             is UnitListItem.Unit_ -> {
-                val unitHolder = holder as UnitViewHolder
-                unitHolder.tvUnitName.text = item.contactUnit.name
-                unitHolder.tvUnitCode.text = item.contactUnit.unitCode
-                unitHolder.tvUnitEmail.text = item.contactUnit.email
-                unitHolder.itemView.setOnClickListener {
-                    onItemClick(item)
-                }
+                (holder as UnitViewHolder).bind(item)
+                holder.itemView.setOnClickListener { onClick(item) }
             }
         }
     }
@@ -72,7 +57,53 @@ class ContactUnitAdapter(
     override fun getItemCount(): Int = items.size
 
     fun updateItems(newItems: List<UnitListItem>) {
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = items.size
+            override fun getNewListSize(): Int = newItems.size
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val oldItem = items[oldItemPosition]
+                val newItem = newItems[newItemPosition]
+                return when {
+                    oldItem is UnitListItem.Header && newItem is UnitListItem.Header ->
+                        oldItem.letter == newItem.letter
+                    oldItem is UnitListItem.Unit_ && newItem is UnitListItem.Unit_ ->
+                        oldItem.contactUnit.id == newItem.contactUnit.id
+                    else -> false
+                }
+            }
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val oldItem = items[oldItemPosition]
+                val newItem = newItems[newItemPosition]
+                return when {
+                    oldItem is UnitListItem.Header && newItem is UnitListItem.Header ->
+                        oldItem.letter == newItem.letter
+                    oldItem is UnitListItem.Unit_ && newItem is UnitListItem.Unit_ ->
+                        oldItem.contactUnit == newItem.contactUnit
+                    else -> false
+                }
+            }
+        })
         items = newItems
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    class HeaderViewHolder(private val binding: HeaderItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(header: UnitListItem.Header) {
+            binding.tvHeader.text = header.letter
+        }
+    }
+
+    class UnitViewHolder(private val binding: UnitItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(unit: UnitListItem.Unit_) {
+            binding.tvUnitName.text = unit.contactUnit.name
+            binding.tvUnitCode.text = unit.contactUnit.unitCode
+            binding.tvUnitEmail.text = unit.contactUnit.email
+            // Set image
+            Glide.with(binding.ivUnitLogo.context)
+                .load(unit.contactUnit.logoUrl)
+                .into(binding.ivUnitLogo)
+        }
     }
 }

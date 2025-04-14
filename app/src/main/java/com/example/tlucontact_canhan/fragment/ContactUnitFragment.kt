@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tlucontact.adapter.ContactUnitAdapter
 import com.example.tlucontact_canhan.activity.UnitDetailActivity
-import com.example.tlucontact_canhan.adapter.ContactUnitAdapter
 import com.example.tlucontact_canhan.R
 import com.example.tlucontact_canhan.databinding.FragmentUnitBinding
 import com.example.tlucontact_canhan.repository.ContactUnitRepository

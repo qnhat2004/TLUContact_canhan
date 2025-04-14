@@ -6,6 +6,7 @@ import com.example.tlucontact_canhan.model.LoginResponse
 import com.example.tlucontact_canhan.model.ContactUnit
 import com.example.tlucontact_canhan.model.PageResponse
 import com.example.tlucontact_canhan.model.RegisterRequest
+import com.example.tlucontact_canhan.model.RegisterResponse
 import com.example.tlucontact_canhan.model.Staff
 import com.example.tlucontact_canhan.model.Student
 import com.example.tlucontact_canhan.model.UnitDetailDTO
@@ -13,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -25,7 +27,7 @@ interface ApiClient {
     suspend fun getUserInfo(): Account
 
     @POST("/api/register")
-    suspend fun register(@Body request: RegisterRequest): Unit
+    suspend fun register(@Body request: RegisterRequest): RegisterResponse
 
     // ----------- Unit API -----------
     @GET("api/units/{id}")
@@ -47,11 +49,6 @@ interface ApiClient {
         @Path("id") id: Long,
     ): Student
 
-    @GET("api/students/{id}")
-    suspend fun getStudentByUserId(
-        @Path("id") id: Long,
-    ): Student
-
     @GET("api/students")
     suspend fun getAllStudents(
         @Query("page") page: Int,
@@ -60,14 +57,30 @@ interface ApiClient {
         @Query("search") search: String? = null,
     ): Response<List<Student>>  // Response: trả về một danh sách sinh viên và mã trạng thái HTTP
 
+    @GET("api/students/user/{id}")
+    suspend fun getStudentByUserId(
+        @Path("id") id: Long,
+    ): Student
+
+    @GET("api/students/studentUnit")
+    suspend fun getAllStudentsByUnitId(): Response<List<Student>>  // Response: trả về một danh sách sinh viên và mã trạng thái HTTP
+
     // ----------- Staff API -----------
-    @GET("api/staffs/{id}")
-    suspend fun getStafById(
+    @GET("api/staff/{id}")
+    suspend fun getStaffById(
         @Path("id") id: Long,
     ): Staff
 
-    @GET("api/staff/staffUser/{id}")
+    @GET("api/staff/user/{id}")
     suspend fun getStaffByUserId(
         @Path("id") id: Long,
     ): Staff
+
+    @GET("api/staff")
+    suspend fun getAllStaffs(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Query("sort") sort: String?,
+        @Query("search") search: String? = null,
+    ): Response<List<Staff>>  // Response: trả về một danh sách giảng viên và mã trạng thái HTTP
 }

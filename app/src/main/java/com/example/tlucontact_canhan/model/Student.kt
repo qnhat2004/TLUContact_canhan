@@ -9,4 +9,5 @@ data class Student(
     val email: String,
     val user: User,
     val unit: ContactUnit,
+    val avatarUrl: String
 )

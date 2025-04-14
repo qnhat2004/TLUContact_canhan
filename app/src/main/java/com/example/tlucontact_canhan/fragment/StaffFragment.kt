@@ -1,28 +1,33 @@
-package com.example.tlucontact_canhan.fragment
+package com.example.tlucontact.fragment
 
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tlucontact_canhan.data.SampleData
-import com.example.tlucontact_canhan.activity.StaffDetailtActivity
-import com.example.tlucontact_canhan.adapter.StaffAdapter
-import com.example.tlucontact_canhan.model.Staff
-import com.example.tlucontact_canhan.model.StaffListItem
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tlucontact.adapter.StaffAdapter
 import com.example.tlucontact_canhan.R
+import com.example.tlucontact_canhan.activity.StaffDetailActivity
 import com.example.tlucontact_canhan.databinding.FragmentStaffBinding
+import com.example.tlucontact_canhan.model.StaffListItem
+import com.example.tlucontact_canhan.repository.StaffRepository
+import com.example.tlucontact_canhan.viewmodel.StaffViewModel
+import com.example.tlucontact_canhan.viewmodel.StaffViewModelFactory
 
 class StaffFragment : Fragment() {
+    private lateinit var viewModel: StaffViewModel
+    private lateinit var staffAdapter: StaffAdapter
+    private lateinit var sortDirection: String
     private var _binding: FragmentStaffBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: StaffAdapter
-    private var isAscending = true // Trạng thái sắp xếp: true = A-Z, false = Z-A
-    private var originalItems = listOf<StaffListItem>() // Danh sách gốc
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,84 +40,98 @@ class StaffFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isAscending = true // Mặc định là A-Z
+        sortDirection = "asc" // Default sort direction
 
-        originalItems = groupStaffsByLetter(SampleData.staffs)
-        adapter = StaffAdapter(originalItems) { staff ->
-            val intent = Intent(requireContext(), StaffDetailtActivity::class.java).apply {
-                putExtra("staff_name", staff.staff.name)
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(this, StaffViewModelFactory(StaffRepository(requireContext())))
+            .get(StaffViewModel::class.java)
+
+        // Initialize RecyclerView and Adapter
+        staffAdapter = StaffAdapter(emptyList()) { staff ->
+            // Handle staff click
+            val intent = Intent(requireContext(), StaffDetailActivity::class.java).apply {
+                putExtra("staff_id", staff.staff.staffId)
+                putExtra("staff_fullName", staff.staff.fullName)
                 putExtra("staff_phone", staff.staff.phone)
                 putExtra("staff_email", staff.staff.email)
-                putExtra("staff_unit", staff.staff.unit)
+                putExtra("staff_address", staff.staff.address)
                 putExtra("staff_position", staff.staff.position)
+                putExtra("staff_education", staff.staff.education)
+                putExtra("staff_unitId", staff.staff.unit.id)
+                putExtra("staff_unitName", staff.staff.unit.name)
+                putExtra("staff_avatarUrl", staff.staff.avatarUrl)
             }
-            startActivity(intent)
+            startActivity(intent) // Start the activity
         }
 
-        binding.rvStaff.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvStaff.adapter = adapter
+        binding.rvStaff.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = staffAdapter
+        }
 
-        // Xử lý tìm kiếm
+        // Observe staff list
+        viewModel.staffs.observe(viewLifecycleOwner) { staffs ->
+            staffAdapter.updateItems(staffs)
+            binding.rvStaff.scrollToPosition(0)
+        }
+
+        // Observe loading state
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.swipeRefreshLayout.isRefreshing = isLoading
+        }
+
+        // Observe error
+        viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Set swipe-to-refresh listener
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.etStaffSearch.setText("") // Xóa query tìm kiếm khi làm mới
+            viewModel.loadFirstPage(sortField = "fullName", sortDirection = sortDirection)
+        }
+
+        // Handle scrolling to load more data
+        binding.rvStaff.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                if (lastVisibleItem >= totalItemCount - 5 && viewModel.hasMoreData.value == true) {
+                    viewModel.loadNextPage()
+                }
+            }
+        })
+
+        // Handle search
         binding.etStaffSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                filterStaffs(s.toString())
+                viewModel.searchStaffs(s.toString())
             }
         })
 
-        // Xử lý sắp xếp
+        // Load the first page
+        viewModel.loadFirstPage(sortField = "fullName", sortDirection = sortDirection)
+
+        // Handle sort button click
         binding.btnSort.setOnClickListener {
-            isAscending = !isAscending
+            sortDirection = if (sortDirection == "asc") "desc" else "asc"
             binding.btnSort.setImageResource(
-                if (isAscending) R.drawable.ic_sort_ascending
+                if (sortDirection == "asc") R.drawable.ic_sort_ascending
                 else R.drawable.ic_sort_descending
             )
-            sortStaffs()
+            viewModel.loadFirstPage(sortField = "fullName", sortDirection = sortDirection)
         }
-    }
 
-    private fun groupStaffsByLetter(staffs: List<Staff>): List<StaffListItem> {
-        val groupedItems = mutableListOf<StaffListItem>()    // List hỗ trợ việc tạo danh sách các mục
-        var currentLetter = ""
-        for (staff in staffs) {
-            val firstLetter = staff.name.firstOrNull()?.uppercase() ?: ""
-            if (firstLetter != currentLetter) {
-                currentLetter = firstLetter
-                groupedItems.add(StaffListItem.Header(currentLetter))    // Thêm tiêu đề mới vào danh sách
-            }
-            groupedItems.add(StaffListItem.Staff_(staff))   // Thêm cbnv vào danh sách
-        }
-        return groupedItems // Trả về danh sách đã nhóm, groupedItems có dạng [Header, Unit, Header, Unit]
-    }
-
-    private fun filterStaffs(query: String) {
-        val filterdStaffs = if (query.isEmpty()) {
-            SampleData.staffs
-        } else {
-            SampleData.staffs.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.phone.contains(query, ignoreCase = true) ||
-                        it.email.contains(query, ignoreCase = true) ||
-                        it.unit.contains(query, ignoreCase = true) ||
-                        it.position.contains(query, ignoreCase = true)
-            }
-        }
-        val groupedItems = groupStaffsByLetter(if (isAscending) filterdStaffs.sortedBy { it.name } else filterdStaffs.sortedByDescending { it.name })
-        adapter.updateItems(groupedItems)
-        originalItems = groupedItems
-    }
-
-    private fun sortStaffs() {
-        val currentStaffs = originalItems.filterIsInstance<StaffListItem.Staff_>().map { it.staff }
-        val sortedStaffs = if (isAscending) {
-            currentStaffs.sortedBy { it.name }
-        } else {
-            currentStaffs.sortedByDescending { it.name }
-        }
-        val newItems = groupStaffsByLetter(sortedStaffs)
-        adapter.updateItems(newItems)
-        originalItems = newItems
+        // Cập nhật icon ban đầu của nút
+        binding.btnSort.setImageResource(R.drawable.ic_sort_ascending)
     }
 
     override fun onDestroyView() {

@@ -7,6 +7,8 @@ import com.example.tlucontact_canhan.activity.LoginActivity
 import com.example.tlucontact_canhan.model.Account
 import com.example.tlucontact_canhan.model.LoginRequest
 import com.example.tlucontact_canhan.model.LoginResponse
+import com.example.tlucontact_canhan.model.RegisterRequest
+import com.example.tlucontact_canhan.model.RegisterResponse
 import com.example.tlucontact_canhan.network.ApiClient
 import com.example.tlucontact_canhan.network.RetrofitClient
 
@@ -48,11 +50,24 @@ class AuthRepository(private val context: Context) {
     }
 
     suspend fun getAccountInfo(): Result<Account> {
-        val token = getToken() ?: return Result.failure(Exception("No token found"))
         return try {
             val response = apiClient.getUserInfo()
             Result.success(response)
         } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun register(registerRequest: RegisterRequest): Result<RegisterResponse> {
+        return try {
+            val response = apiClient.register(registerRequest)
+            // Lưu token
+            sharedPreferences.edit()
+                .putString("jwt_token", response.id_token)
+                .apply()
+            Result.success(response)
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Register failed: ${e.message}")
             Result.failure(e)
         }
     }

@@ -50,7 +50,7 @@ class ProfileViewModel(
                     _profileState.value = AccountProfileState.StudentSuccess(AccountStudent(accountInfo, studentInfo))
                 }
 
-                accountInfo.authorities.contains("ROLE_STAFF") -> {
+                accountInfo.authorities.contains("ROLE_TEACHER") -> {
                     val staffResult = staffRe.getStaffByUserId(accountInfo.id)
                     if (staffResult.isFailure) {
                         _profileState.value = AccountProfileState.Error("Lỗi khi lấy thông tin nhân viên: ${staffResult.exceptionOrNull()?.message}")
